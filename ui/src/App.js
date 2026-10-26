@@ -16,14 +16,27 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
 
   const fetchTasks = async () => {
-    try {
-      const { data } = await axios.get(API_URL);
+  try {
+    const { data } = await axios.get(API_URL);
 
-      setTasks(data);
-    } catch (err) {
-      console.log(err);
+    console.log("Respuesta de la API:", data);
+
+    if (!Array.isArray(data)) {
+      console.error("La API no devolvió una lista:", data);
+      setTasks([]);
+      return;
     }
-  };
+
+    setTasks(data);
+  } catch (err) {
+    console.error(
+      "Error al obtener tareas:",
+      err.response?.status,
+      err.response?.data ?? err.message
+    );
+    setTasks([]);
+  }
+};
 
   useEffect(() => {
     fetchTasks();
