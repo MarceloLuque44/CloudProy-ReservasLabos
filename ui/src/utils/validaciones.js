@@ -83,11 +83,20 @@ export function validarReserva(datos) {
   const eTipo = validarCampo(datos.tipoSolicitante, reglasTipo)
   if (eTipo.length) errores.tipoSolicitante = eTipo[0]
 
-  const reglasSigla = [{ requerido: true }]
+
+  const actividadesConMateria = [
+    'Clase teórica',
+    'Práctica / laboratorio',
+    'Examen',
+  ]
+
+  const requiereMateria = actividadesConMateria.includes(datos.actividad)
+
+  const reglasSigla = [{ requerido: requiereMateria }]
   const eSigla = validarCampo(datos.sigla, reglasSigla)
   if (eSigla.length) errores.sigla = eSigla[0]
 
-  const reglasMateria = [{ requerido: true }]
+  const reglasMateria = [{ requerido: requiereMateria }]
   const eMateria = validarCampo(datos.materia, reglasMateria)
   if (eMateria.length) errores.materia = eMateria[0]
 
