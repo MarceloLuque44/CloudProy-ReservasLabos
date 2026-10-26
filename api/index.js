@@ -1,7 +1,14 @@
 import express from "express";
 import serverless from "serverless-http";
 import cors from "cors";
-import { fetchTasks, createTasks, updateTasks, deleteTasks } from "./task.js";
+import {
+  ReservaError,
+  obtenerHorarios,
+  crearReserva,
+  obtenerReserva,
+  cancelarReserva,
+  listarReservas,
+} from "./reservas.js";
 
 const app = express();
 const port = 3001;
@@ -13,58 +20,73 @@ if (process.env.DEVELOPMENT) {
 }
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("API de reservas de laboratorios");
 });
 
-app.get("/task", async (req, res) => {
+app.get("/horarios", async (req, res) => {
   try {
-    const tasks = await fetchTasks();
-
-    res.send(tasks.Items);
+    const respuesta = await obtenerHorarios(req.query);
+    res.send(respuesta);
   } catch (err) {
-    res.status(400).send(`Error fetching tasks: ${err}`);
+    if (err instanceof ReservaError) {
+      res.status(err.estado).send({ mensaje: err.message });
+      return;
+    }
+    res.status(500).send({ mensaje: "Error al consultar los horarios." });
   }
 });
 
-app.post("/task", async (req, res) => {
+app.post("/reservas", async (req, res) => {
   try {
-    const task = req.body;
-
-    const response = await createTasks(task);
-
-    res.send(response);
+    const reserva = await crearReserva(req.body);
+    res.status(201).send(reserva);
   } catch (err) {
-    res.status(400).send(`Error creating tasks: ${err}`);
+    if (err instanceof ReservaError) {
+      res.status(err.estado).send({ mensaje: err.message });
+      return;
+    }
+    res.status(500).send({ mensaje: "Error interno al registrar la reserva." });
   }
 });
 
-app.put("/task", async (req, res) => {
+app.get("/reservas", async (req, res) => {
   try {
-    const task = req.body;
-
-    const response = await updateTasks(task);
-
-    res.send(response);
+    const respuesta = await listarReservas();
+    res.send(respuesta);
   } catch (err) {
-    res.status(400).send(`Error updating tasks: ${err}`);
+    res.status(500).send({ mensaje: "Error al listar las reservas." });
   }
 });
 
-app.delete("/task/:id", async (req, res) => {
+app.get("/reservas/:codigo", async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const response = await deleteTasks(id);
-
-    res.send(response);
+    const reserva = await obtenerReserva(req.params.codigo);
+    res.send(reserva);
   } catch (err) {
-    res.status(400).send(`Error deleting tasks: ${err}`);
+    if (err instanceof ReservaError) {
+      res.status(err.estado).send({ mensaje: err.message });
+      return;
+    }
+    res.status(500).send({ mensaje: "Error al consultar la reserva." });
+  }
+});
+
+app.delete("/reservas/:codigo", async (req, res) => {
+  try {
+    const reserva = await cancelarReserva(req.params.codigo);
+    res.send(reserva);
+  } catch (err) {
+    if (err instanceof ReservaError) {
+      res.status(err.estado).send({ mensaje: err.message });
+      return;
+    }
+    res.status(500).send({ mensaje: "Error al cancelar la reserva." });
   }
 });
 
 if (process.env.DEVELOPMENT) {
   app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`API de reservas listening on port ${port}`);
   });
 }
 

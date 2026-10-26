@@ -1,38 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap');
+
+:root {
+  --tinta: #0e1b2c;
+  --tinta-suave: #51607a;
+  --papel: #eef1f5;
+  --superficie: #ffffff;
+  --borde: #d3dae5;
+  --cobalto: #2145c8;
+  --cobalto-oscuro: #1a37a0;
+  --ambar: #f5b301;
+  --libre: #0f7b5f;
+  --libre-fondo: #dff3ec;
+  --ocupado: #b4232c;
+  --ocupado-fondo: #fbe3e4;
+  --aviso-fondo: #fff3cd;
+  --aviso-texto: #6b4e00;
+  --info-fondo: #e3ebfb;
+  --fuente-titulo: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --fuente-texto: 'Figtree', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  display: flex;
-  justify-content: center;
+  margin: 0;
+  font-family: var(--fuente-texto);
+  font-size: 16px;
+  line-height: 1.55;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
-.addTaskForm {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 2rem;
+#root {
+  min-height: 100vh;
 }
 
-.task {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-titulo);
+  line-height: 1.2;
+  margin: 0 0 0.5em;
 }
 
-.taskButtons {
-  display: flex;
-  gap: 5px;
+code {
+  background: rgba(14, 27, 44, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
 }
 
-.dialog {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 0 1rem 1rem 1rem;
+:focus-visible {
+  outline: 3px solid var(--ambar);
+  outline-offset: 2px;
 }
 
-.flex {
-  display: flex;
-}
-
-.done {
-  text-decoration: line-through;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
