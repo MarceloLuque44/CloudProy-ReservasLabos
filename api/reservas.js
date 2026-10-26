@@ -42,6 +42,7 @@ const hoyISO = () => {
 };
 
 // GET /horarios?fecha=...&laboratorio=...
+// comit prueba
 export const obtenerHorarios = async ({ fecha, laboratorio }) => {
   if (!fecha || !laboratorio) {
     throw new ReservaError("Indica la fecha y el laboratorio", 400);
