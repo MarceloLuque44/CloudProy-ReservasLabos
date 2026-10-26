@@ -29,9 +29,11 @@ export default function AdminPage() {
   const [filtro, setFiltro] = useState('')
 
   const reservas = datos?.reservas ?? []
-  const visibles = reservas.filter((r) => coincide(r, filtro))
-  const confirmadas = reservas.filter((r) => r.estado === 'CONFIRMADA').length
-  const canceladas = reservas.length - confirmadas
+  const esReserva = (r) => r && typeof r.estado === 'string' && String(r.codigo ?? '').trim() && r.fecha && r.laboratorio
+  const validas = reservas.filter(esReserva)
+  const visibles = validas.filter((r) => coincide(r, filtro))
+  const confirmadas = validas.filter((r) => r.estado === 'CONFIRMADA').length
+  const canceladas = validas.length - confirmadas
 
   return (
     <>
@@ -56,13 +58,13 @@ export default function AdminPage() {
       {!cargando && !error && (
         <>
           <div className="estadisticas">
-            <span><strong>{reservas.length}</strong> reservas en total</span>
+            <span><strong>{validas.length}</strong> reservas en total</span>
             <span><strong>{confirmadas}</strong> confirmadas</span>
             <span><strong>{canceladas}</strong> canceladas</span>
           </div>
 
           <Card titulo="Listado">
-            {reservas.length === 0 ? (
+            {validas.length === 0 ? (
               <Vacio titulo="Aún no hay reservas registradas">
                 Cuando alguien complete el formulario de Reservar, su reserva aparecerá aquí.
               </Vacio>

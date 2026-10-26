@@ -125,7 +125,7 @@ export default function CancelarPage() {
         <Card titulo="Detalles de la reserva">
           <div className="reserva-detalle">
             <p>
-              <Badge estado={reserva.estado} />
+              {typeof reserva.estado === 'string' ? <Badge estado={reserva.estado} /> : null}
             </p>
             <p><strong>Código:</strong> {reserva.codigo}</p>
             <p><strong>Solicitante:</strong> {reserva.nombre}</p>
