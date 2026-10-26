@@ -74,20 +74,41 @@ export const obtenerHorarios = async ({ fecha, laboratorio }) => {
 
 // POST /reservas
 export const crearReserva = async (datos) => {
+
+  const actividadesConMateria = [
+    "Clase teórica",
+    "Práctica / laboratorio",
+    "Examen",
+  ];
+
+  const requiereMateria = actividadesConMateria.includes(
+    datos?.actividad
+  );
+
   const obligatorios = [
     "nombre",
     "tipoSolicitante",
-    "sigla",
-    "materia",
     "actividad",
     "laboratorio",
     "fecha",
     "horario",
   ];
-  const faltan = obligatorios.filter((c) => !String(datos?.[c] ?? "").trim());
-  if (faltan.length) {
-    throw new ReservaError(`Faltan datos obligatorios: ${faltan.join(", ")}`, 400);
+
+  if (requiereMateria) {
+    obligatorios.push("sigla", "materia");
   }
+
+  const faltan = obligatorios.filter(
+    (campo) => !String(datos?.[campo] ?? "").trim()
+  );
+
+  if (faltan.length) {
+    throw new ReservaError(
+      `Faltan datos obligatorios: ${faltan.join(", ")}`,
+      400
+    );
+  }
+
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(datos.fecha)) {
     throw new ReservaError("Fecha inválida. Usa el formato YYYY-MM-DD.", 400);
@@ -111,8 +132,7 @@ export const crearReserva = async (datos) => {
     codigo,
     nombre: datos.nombre.trim(),
     tipoSolicitante: datos.tipoSolicitante,
-    sigla: datos.sigla.trim(),
-    materia: datos.materia.trim(),
+
     actividad: datos.actividad,
     laboratorio: datos.laboratorio,
     fecha: datos.fecha,
@@ -122,6 +142,16 @@ export const crearReserva = async (datos) => {
     GSI1PK: `CODIGO#${codigo}`,
     GSI1SK: "RESERVA",
   };
+
+
+  if (datos.sigla && String(datos.sigla).trim()) {
+    item.sigla = String(datos.sigla).trim();
+  }
+
+  if (datos.materia && String(datos.materia).trim()) {
+    item.materia = String(datos.materia).trim();
+  }
+
 
   if (datos.paralelo && String(datos.paralelo).trim()) {
     item.paralelo = datos.paralelo.trim();
