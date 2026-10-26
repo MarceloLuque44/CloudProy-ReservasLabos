@@ -132,7 +132,7 @@ Si otro usuario reserva el horario antes de que finalice la operación, la segun
 
 ## 7. Consulta por código de reserva
 
-Para buscar una reserva mediante su código se propone crear un índice secundario global, denominado `GSI_Codigo`, con esta configuración:
+Para buscar una reserva mediante su código se crea un índice secundario global, denominado `GSI1_Codigo` (índice ya creado en la tabla real de AWS), con esta configuración:
 
 - Clave de partición: `GSI1PK`.
 - Clave de ordenamiento: `GSI1SK`.
@@ -166,7 +166,7 @@ El modelo deberá ser compatible con los endpoints definidos en `docs/CONTRATO_A
 |---|---|
 | `GET /horarios?fecha=...&laboratorio=...` | Consultar los horarios y determinar su disponibilidad. |
 | `POST /reservas` | Registrar una reserva si el horario está disponible. |
-| `GET /reservas/{codigo}` | Buscar una reserva por código mediante `GSI_Codigo`. |
+| `GET /reservas/{codigo}` | Buscar una reserva por código mediante `GSI1_Codigo`. |
 | `DELETE /reservas/{codigo}` | Cancelar una reserva y liberar el horario. |
 | `GET /reservas` | Listar reservas para la vista administrativa o de consulta. |
 

@@ -12,7 +12,7 @@ Estructura:
 ## Datos del dominio
 
 - Tabla DynamoDB: `ReservasLaboratorio` (clave compuesta `PK: LAB#...#fecha`, `SK: SLOT#...`,
-  e índice `GSI_Codigo` sobre `GSI1PK`). Modelo completo en `ui/docs/MODELO_DYNAMODB.md`.
+  e índice `GSI1_Codigo` sobre `GSI1PK`). Modelo completo en `ui/docs/MODELO_DYNAMODB.md`.
 - Contrato de la API: `ui/docs/CONTRATO_API.md`.
 
 ## Cómo correr en local

@@ -152,7 +152,7 @@ export const obtenerReserva = async (codigo) => {
 
   const command = new QueryCommand({
     TableName: TABLA_RESERVAS,
-    IndexName: "GSI_Codigo",
+    IndexName: "GSI1_Codigo",
     KeyConditionExpression: "GSI1PK = :gpk",
     ExpressionAttributeValues: {
       ":gpk": `CODIGO#${clave}`,

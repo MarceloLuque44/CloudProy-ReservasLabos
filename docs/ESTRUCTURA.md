@@ -98,7 +98,7 @@ React SPA  ──fetch──▶  Amazon API Gateway  ──proxy integración─
 | Recurso AWS | Nombre | Notas |
 |---|---|---|
 | Tabla DynamoDB | `ReservasLaboratorio` | Región `us-west-1`; clave `PK` (String) + `SK` (String) |
-| Índice global | `GSI_Codigo` | `GSI1PK` (String) + `GSI1SK` (String). Necesario para consultar por código |
+| Índice global | `GSI1_Codigo` | `GSI1PK` (String) + `GSI1SK` (String). Necesario para consultar por código |
 | Variable de entorno Lambda | `TABLA_RESERVAS` | Opcional; si no se define se usa `ReservasLaboratorio` |
 | Variables de build Amplify | `VITE_USE_MOCK=false`, `VITE_API_URL` | URL base de API Gateway sin `/` final |
 
@@ -109,7 +109,7 @@ React SPA  ──fetch──▶  Amazon API Gateway  ──proxy integración─
 Detalle completo en `ui/docs/MODELO_DYNAMODB.md`. Resumen:
 
 - `PK = LAB#<LABORATORIO>#<fecha>` y `SK = SLOT#<horario>` → un bloque de un laboratorio en una fecha. La unicidad la garantiza `ConditionExpression: attribute_not_exists(PK)` al crear el ítem. Si la condición falla la API responde **409**.
-- `GSI1PK = CODIGO#<codigo>`, `GSI1SK = "RESERVA"` → búsqueda por código a través de `GSI_Codigo`.
+- `GSI1PK = CODIGO#<codigo>`, `GSI1SK = "RESERVA"` → búsqueda por código a través de `GSI1_Codigo`.
 - `estado`: `CONFIRMADA` o `CANCELADA`. Al cancelar se elimina el ítem y el bloque vuelve a estar disponible (aún así se responde la reserva con `estado: CANCELADA` + `canceladaEn`).
 - Los horarios fijos (6 bloques de 08:00 a 20:00) son configuración, no datos: viven en `ui/src/config/constantes.js` y en `api/reservas.js`. No se requiere tabla extra de horarios.
 
@@ -137,7 +137,7 @@ Formato de error uniforme: `{ "mensaje": "texto legible para el usuario" }`.
 - `reservas.js`: capa de dominio con el SDK v3 (`@aws-sdk/lib-dynamodb`):
   - `obtenerHorarios({fecha, laboratorio})` — `Query` por `PK`, devuelve la grilla completa con `disponible: true/false`.
   - `crearReserva(datos)` — valida campos obligatorios, formato y fecha pasada; intenta `Put` con condición; genera código `RES-XXXXXX` aleatorio.
-  - `obtenerReserva(codigo)` — `Query` sobre `GSI_Codigo` → 404 si no existe.
+  - `obtenerReserva(codigo)` — `Query` sobre `GSI1_Codigo` → 404 si no existe.
   - `cancelarReserva(codigo)` — consulta y `Delete`; devuelve la reserva con estado `CANCELADA`.
   - `listarReservas()` — `Scan` (válido para volúmenes académicos pequeños), ordenado por fecha+horario.
 
