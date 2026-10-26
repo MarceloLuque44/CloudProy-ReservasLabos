@@ -1,79 +1,205 @@
 import { Link } from 'react-router-dom'
-import { CalendarDays, CalendarPlus } from 'lucide-react'
-import { Card } from '../components/ui'
+import {
+  CalendarDays,
+  CalendarPlus,
+  Clock3,
+  FlaskConical,
+  CheckCircle2,
+  ArrowRight,
+  ClipboardList,
+  ShieldCheck,
+} from 'lucide-react'
 import { HORARIOS } from '../config/constantes'
+import './InicioPage.css'
 
-// Solo ilustrativo: qué bloques se muestran como ocupados en el ejemplo
 const OCUPADOS_EJEMPLO = [1, 4]
 
 const PASOS = [
-  { titulo: 'Consulta los horarios', texto: 'Elige el laboratorio y la fecha. Los bloques libres aparecen en verde.' },
-  { titulo: 'Reserva tu bloque', texto: 'Completa tus datos y la materia. La reserva se confirma al instante.' },
-  { titulo: 'Guarda tu código', texto: 'Lo necesitas para cancelar. Al cancelar, el horario queda libre para otros.' },
+  {
+    numero: '01',
+    icono: CalendarDays,
+    titulo: 'Consulta disponibilidad',
+    texto: 'Selecciona el laboratorio y la fecha para revisar los bloques horarios.',
+  },
+  {
+    numero: '02',
+    icono: ClipboardList,
+    titulo: 'Completa tu solicitud',
+    texto: 'Ingresa tus datos y la información de la actividad académica.',
+  },
+  {
+    numero: '03',
+    icono: CheckCircle2,
+    titulo: 'Confirma tu reserva',
+    texto: 'Guarda el código de reserva para identificarla y gestionar su cancelación.',
+  },
 ]
 
 const REGLAS = [
-  'Una reserva es un laboratorio, una fecha y un bloque horario.',
-  'Un bloque ya reservado no se puede volver a reservar.',
-  'No se pueden reservar fechas pasadas.',
-  'Cancelar libera el horario de inmediato.',
+  'Cada reserva corresponde a un laboratorio, una fecha y un bloque horario.',
+  'Un bloque que ya está reservado no puede asignarse nuevamente.',
+  'No se permiten reservas para fechas pasadas.',
+  'Al cancelar una reserva, el horario puede quedar disponible nuevamente.',
 ]
 
 export default function InicioPage() {
   return (
-    <>
-      <section className="portada">
-        <div className="portada-texto">
-          <h1>Reserva un laboratorio sin esperar la respuesta de nadie</h1>
-          <p>
-            Antes la solicitud se enviaba en Word por WhatsApp y alguien la respondía a mano. Ahora ves qué horarios
-            están libres, reservas y cancelas desde aquí.
+    <main className="inicio">
+      <section className="inicio-hero">
+        <div className="inicio-hero-contenido">
+          <span className="inicio-etiqueta">
+            <FlaskConical size={16} aria-hidden="true" />
+            CARRERA DE INFORMÁTICA · UMSA
+          </span>
+
+          <h1>
+            Tu próximo laboratorio
+            <span> comienza aquí.</span>
+          </h1>
+
+          <p className="inicio-descripcion">
+            Consulta horarios, encuentra un espacio disponible y gestiona
+            tus reservas de laboratorios en un solo lugar.
           </p>
-          <div className="portada-acciones">
-            <Link to="/reservar" className="btn btn-primario">
-              <CalendarPlus size={18} aria-hidden="true" />
-              Reservar un laboratorio
+
+          <div className="inicio-acciones">
+            <Link to="/reservar" className="inicio-btn inicio-btn-principal">
+              <CalendarPlus size={19} aria-hidden="true" />
+              Reservar laboratorio
+              <ArrowRight size={17} aria-hidden="true" />
             </Link>
-            <Link to="/horarios" className="btn btn-secundario">
-              <CalendarDays size={18} aria-hidden="true" />
-              Ver horarios libres
+
+            <Link to="/horarios" className="inicio-btn inicio-btn-secundario">
+              <CalendarDays size={19} aria-hidden="true" />
+              Consultar horarios
             </Link>
+          </div>
+
+          <div className="inicio-confianza">
+            <ShieldCheck size={18} aria-hidden="true" />
+            <span>Organiza tus actividades académicas con mayor facilidad.</span>
           </div>
         </div>
 
-        <figure className="portada-franja">
-          <div className="franja" role="img" aria-label="Ejemplo de un día con bloques libres y ocupados">
-            {HORARIOS.map((h, i) => (
-              <div key={h} className={`franja-bloque ${OCUPADOS_EJEMPLO.includes(i) ? 'ocupado' : 'libre'}`}>
-                <span>{h.split(' - ')[0]}</span>
-                <small>{OCUPADOS_EJEMPLO.includes(i) ? 'Ocupado' : 'Libre'}</small>
-              </div>
-            ))}
+        <aside className="inicio-panel" aria-label="Ejemplo visual de horarios">
+          <div className="inicio-panel-cabecera">
+            <div>
+              <span className="inicio-panel-subtitulo">VISTA PREVIA</span>
+              <h2>Horario del laboratorio</h2>
+              <p>Ejemplo ilustrativo de un día</p>
+            </div>
+
+            <div className="inicio-panel-icono">
+              <Clock3 size={23} aria-hidden="true" />
+            </div>
           </div>
-          <figcaption>Así se ve un día en un laboratorio. Cada bloque dura dos horas.</figcaption>
-        </figure>
+
+          <div className="inicio-leyenda">
+            <span><i className="punto-libre" /> Libre</span>
+            <span><i className="punto-ocupado" /> Ocupado</span>
+          </div>
+
+          <div className="inicio-horarios">
+            {HORARIOS.map((horario, index) => {
+              const ocupado = OCUPADOS_EJEMPLO.includes(index)
+
+              return (
+                <div
+                  key={horario}
+                  className={`inicio-bloque ${ocupado ? 'bloque-ocupado' : 'bloque-libre'}`}
+                >
+                  <div className="inicio-bloque-hora">
+                    <Clock3 size={15} aria-hidden="true" />
+                    <span>{horario}</span>
+                  </div>
+
+                  <span className="inicio-estado">
+                    {ocupado ? 'Ocupado' : 'Libre'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+
+          <Link to="/horarios" className="inicio-ver-horarios">
+            Explorar horarios
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+
+          <p className="inicio-nota">
+            Los estados mostrados son de ejemplo y no representan
+            disponibilidad en tiempo real.
+          </p>
+        </aside>
+
+        <div className="inicio-decoracion inicio-decoracion-uno" />
+        <div className="inicio-decoracion inicio-decoracion-dos" />
       </section>
 
-      <div className="rejilla-2">
-        <Card titulo="Cómo funciona">
-          <ol className="pasos">
-            {PASOS.map((p) => (
-              <li key={p.titulo}>
-                <strong>{p.titulo}</strong>
-                <span>{p.texto}</span>
-              </li>
-            ))}
-          </ol>
-        </Card>
+      <section className="inicio-seccion">
+        <div className="inicio-titulo-seccion">
+          <span className="inicio-sobrelinea">SENCILLO Y PRÁCTICO</span>
+          <h2>¿Cómo funciona?</h2>
+          <p>
+            Tres pasos para organizar el uso de los laboratorios.
+          </p>
+        </div>
 
-        <Card titulo="Reglas de reserva">
-          <ul className="reglas">
-            {REGLAS.map((r) => (
-              <li key={r}>{r}</li>
-            ))}
-          </ul>
-        </Card>
-      </div>
-    </>
+        <div className="inicio-pasos">
+          {PASOS.map(({ numero, icono: Icono, titulo, texto }) => (
+            <article className="inicio-paso" key={numero}>
+              <div className="inicio-paso-superior">
+                <div className="inicio-paso-icono">
+                  <Icono size={23} aria-hidden="true" />
+                </div>
+                <span className="inicio-paso-numero">{numero}</span>
+              </div>
+
+              <h3>{titulo}</h3>
+              <p>{texto}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="inicio-reglas">
+        <div className="inicio-reglas-intro">
+          <div className="inicio-reglas-icono">
+            <ShieldCheck size={26} aria-hidden="true" />
+          </div>
+
+          <span className="inicio-sobrelinea">USO RESPONSABLE</span>
+          <h2>Antes de reservar</h2>
+          <p>
+            Ten en cuenta estas condiciones para que todos puedan
+            utilizar los espacios académicos de manera organizada.
+          </p>
+
+          <Link to="/reservar" className="inicio-enlace">
+            Comenzar una reserva
+            <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        </div>
+
+        <div className="inicio-reglas-lista">
+          {REGLAS.map((regla, index) => (
+            <div className="inicio-regla" key={regla}>
+              <span className="inicio-regla-check">
+                <CheckCircle2 size={19} aria-hidden="true" />
+              </span>
+              <span>{regla}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="inicio-footer">
+        <FlaskConical size={19} aria-hidden="true" />
+        <p>
+          Sistema de reservas de laboratorios
+          <span> Carrera de Informática · UMSA</span>
+        </p>
+      </footer>
+    </main>
   )
 }
