@@ -34,6 +34,15 @@ export default function ReservaPage() {
   const [consultaFecha, setConsultaFecha] = useState(hoyISO())
   const [consultaLaboratorio, setConsultaLaboratorio] = useState(LABORATORIOS[0])
 
+  const actividadesConMateria = [
+    'Clase teórica',
+    'Práctica / laboratorio',
+    'Examen',
+  ]
+
+  const requiereMateria = actividadesConMateria.includes(datos.actividad)
+
+
   useEffect(() => {
     let vigente = true
 
@@ -65,16 +74,23 @@ export default function ReservaPage() {
 
   const disponibles = horarios.filter((h) => h.disponible).map((h) => h.horario)
 
+
   const cambiar = (campo, valor) => {
     setDatos((previo) => ({ ...previo, [campo]: valor }))
-    if (errores[campo]) {
-      setErrores((previo) => {
-        const siguiente = { ...previo }
-        delete siguiente[campo]
-        return siguiente
-      })
-    }
+
+    setErrores((previo) => {
+      const siguiente = { ...previo }
+      delete siguiente[campo]
+
+      if (campo === 'actividad') {
+        delete siguiente.sigla
+        delete siguiente.materia
+      }
+
+      return siguiente
+    })
   }
+
 
   const enviar = async (e) => {
     e.preventDefault()
@@ -167,12 +183,21 @@ export default function ReservaPage() {
                 </select>
               </Campo>
 
-              <Campo id="sigla" etiqueta="Sigla de la materia" error={errores.sigla} ayuda="Ejemplo: INF-312">
+              <Campo
+                id="sigla"
+                etiqueta={`Sigla de la materia${requiereMateria ? '' : ' (opcional)'}`}
+                error={errores.sigla}
+                ayuda={
+                  requiereMateria
+                    ? 'Obligatoria para clases, prácticas y exámenes. Ejemplo: INF-312'
+                    : 'Opcional para esta actividad.'
+                }
+              >
                 <input
                   id="sigla"
                   value={datos.sigla}
                   onChange={(e) => cambiar('sigla', e.target.value)}
-                  required
+                  required={requiereMateria}
                 />
               </Campo>
 
@@ -184,12 +209,21 @@ export default function ReservaPage() {
                 />
               </Campo>
 
-              <Campo id="materia" etiqueta="Materia" error={errores.materia} ayuda="Ejemplo: Base de Datos">
+              <Campo
+                id="materia"
+                etiqueta={`Materia${requiereMateria ? '' : ' (opcional)'}`}
+                error={errores.materia}
+                ayuda={
+                  requiereMateria
+                    ? 'Obligatoria para clases, prácticas y exámenes. Ejemplo: Base de Datos'
+                    : 'Opcional para esta actividad.'
+                }
+              >
                 <input
                   id="materia"
                   value={datos.materia}
                   onChange={(e) => cambiar('materia', e.target.value)}
-                  required
+                  required={requiereMateria}
                 />
               </Campo>
 
