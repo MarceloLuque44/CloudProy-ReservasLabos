@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { PageHeader, Campo, Button, Alert, Card } from '../components/ui'
 import { reservasService } from '../services/reservasService'
 import { useToast } from '../context/ToastContext'
@@ -26,6 +27,7 @@ export default function ReservaPage() {
   const toast = useToast()
   const [datos, setDatos] = useState(DATOS_INICIALES)
   const [errores, setErrores] = useState({})
+  const [reservaCreada, setReservaCreada] = useState(null)
   const [cargando, setCargando] = useState(false)
   const [enviado, setEnviado] = useState(false)
   const [horarios, setHorarios] = useState([])
@@ -87,7 +89,8 @@ export default function ReservaPage() {
 
     setCargando(true)
     try {
-      await reservasService.crearReserva(datos)
+      const reserva = await reservasService.crearReserva(datos)
+      setReservaCreada(reserva)
       setEnviado(true)
       toast.exito('Reserva registrada correctamente.')
     } catch (error) {
@@ -105,9 +108,30 @@ export default function ReservaPage() {
       />
 
       {enviado ? (
-        <Alert tipo="exito" titulo="Reserva confirmada">
-          Tus datos se guardaron. Guarda el código que se muestra para poder cancelar la reserva.
-        </Alert>
+        <>
+          <Alert tipo="exito" titulo="Reserva confirmada">
+            Tus datos se guardaron. Guarda el código que se muestra para poder cancelar la reserva.
+          </Alert>
+
+          <Card titulo="Tu código de reserva">
+            <div className="reserva-detalle">
+              <p className="codigo-destacado">{reservaCreada?.codigo}</p>
+              <p><strong>Solicitante:</strong> {reservaCreada?.nombre}</p>
+              <p><strong>Laboratorio:</strong> {reservaCreada?.laboratorio}</p>
+              <p><strong>Fecha:</strong> {reservaCreada?.fecha}</p>
+              <p><strong>Horario:</strong> {reservaCreada?.horario}</p>
+            </div>
+
+            <div className="modal-acciones">
+              <Button type="button" variante="fantasma" onClick={() => { setDatos(DATOS_INICIALES); setEnviado(false); setReservaCreada(null) }}>
+                Reservar otro bloque
+              </Button>
+              <Link to="/cancelar" className="btn btn-secundario">
+                Cancelar reserva
+              </Link>
+            </div>
+          </Card>
+        </>
       ) : (
         <Card titulo="Nueva reserva">
           <form onSubmit={enviar} noValidate>
@@ -235,7 +259,8 @@ export default function ReservaPage() {
                 type="submit"
                 variante="primario"
                 cargando={cargando}
-                disabled={cargando}
+                disabled={cargando || horarios.length === 0}
+                title={horarios.length === 0 ? 'Cargando disponibles…' : undefined}
               >
                 Reservar
               </Button>

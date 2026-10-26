@@ -65,3 +65,18 @@ code {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Detalle de reserva (pantallas de Reservar y Cancelar) */
+.reserva-detalle p { margin: 0.35rem 0; }
+
+.codigo-destacado {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  background: var(--color-fondo-alt, #f1f5f9);
+  border: 1px dashed var(--color-borde, #cbd5e1);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
