@@ -78,7 +78,17 @@ export default function ReservaPage() {
 
   const enviar = async (e) => {
     e.preventDefault()
-    const resultado = validarReserva(datos)
+
+    let resultado
+    try {
+      resultado = validarReserva(datos)
+    } catch (error) {
+      // Blindaje: que un fallo inesperado de validación no silencie el botón.
+      console.error('Error al validar el formulario:', error)
+      setErrores((previo) => ({ ...previo, servidor: 'Ocurrió un problema al validar el formulario. Intenta de nuevo.' }))
+      return
+    }
+
     setErrores(resultado.errores)
     if (!resultado.valido) return
 

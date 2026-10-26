@@ -56,15 +56,15 @@ export function validarCampo(valor, reglas) {
       continue
     }
 
-    if (regula.enumerado && !regula.enumerado.includes(valor)) {
+    if (regla.enumerado && !regla.enumerado.includes(valor)) {
       errores.push(regla.mensajeEnumerado || 'Opción no válida.')
     }
 
-    if (regula.fecha && !esFechaValida(valor)) {
+    if (regla.fecha && !esFechaValida(valor)) {
       errores.push(regla.mensajeFecha || 'Fecha no válida.')
     }
 
-    if (regula.noPasada && esFechaValida(valor) && esFechaPasada(valor)) {
+    if (regla.noPasada && esFechaValida(valor) && esFechaPasada(valor)) {
       errores.push(regla.mensajeNoPasada || 'No se permite una fecha pasada.')
     }
   }

@@ -80,3 +80,34 @@ code {
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
 }
+
+/* Reservas registradas (listado administrativo) */
+.estadisticas {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  color: var(--color-texto-suave, #475569);
+}
+
+.tabla-envuelta { overflow-x: auto; }
+
+.tabla-reservas {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tabla-reservas th,
+.tabla-reservas td {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--color-borde, #e2e8f0);
+}
+
+.tabla-reservas th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-suave, #64748b);
+}

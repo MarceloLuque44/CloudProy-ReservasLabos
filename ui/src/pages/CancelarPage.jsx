@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PageHeader, Campo, Button, Alert, Card, Badge, Modal } from '../components/ui'
+import { PageHeader, Campo, Button, Alert, Card, Badge, Modal, Vacio } from '../components/ui'
 import { reservasService } from '../services/reservasService'
 import { useToast } from '../context/ToastContext'
 import { ESTADOS } from '../config/constantes'
@@ -14,6 +14,7 @@ export default function CancelarPage() {
   const [consultando, setConsultando] = useState(false)
   const [cancelando, setCancelando] = useState(false)
   const [confirmarAbierto, setConfirmarAbierto] = useState(false)
+  const [noEncontrada, setNoEncontrada] = useState(false)
 
   const normalizar = (valor) => String(valor).trim().toUpperCase()
 
@@ -27,12 +28,18 @@ export default function CancelarPage() {
 
     setError(null)
     setReserva(null)
+    setNoEncontrada(false)
     setConsultando(true)
     try {
       const resultado = await reservasService.obtenerReserva(clave)
       setReserva(resultado)
     } catch (err) {
-      setError({ titulo: 'No se pudo consultar la reserva', detalle: mensajeTecnico(err) })
+      if (err.estado === 404) {
+        // No existe la reserva: es una respuesta normal, no un error del sistema.
+        setNoEncontrada(true)
+      } else {
+        setError({ titulo: 'No se pudo consultar la reserva', detalle: mensajeTecnico(err) })
+      }
     } finally {
       setConsultando(false)
     }
@@ -61,6 +68,7 @@ export default function CancelarPage() {
     setCodigo('')
     setReserva(null)
     setError(null)
+    setNoEncontrada(false)
   }
 
   const cancelada = reserva?.estado === ESTADOS.CANCELADA
@@ -76,6 +84,14 @@ export default function CancelarPage() {
         <Alert tipo="error" titulo={error.titulo}>
           {error.detalle}
         </Alert>
+      )}
+
+      {noEncontrada && (
+        <Vacio titulo="Reserva no encontrada">
+          No existe una reserva con el código <strong>{codigo.trim().toUpperCase()}</strong>.
+          Revisa que esté escrito correctamente (formato RES-XXXXXX) o consulta tu código en la
+          pantalla de confirmación de la reserva.
+        </Vacio>
       )}
 
       <Card titulo="Buscar reserva por código">
