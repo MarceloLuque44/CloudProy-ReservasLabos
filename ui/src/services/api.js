@@ -19,7 +19,18 @@ async function peticion(ruta, opciones = {}) {
       signal: controlador.signal,
       ...opciones,
     })
-    const datos = await respuesta.json().catch(() => ({}))
+    let datos = await respuesta.json().catch(() => ({}))
+
+    // Si la respuesta viene envuelta por Lambda, extraer el body.
+    if (typeof datos.body === 'string') {
+      try {
+        datos = JSON.parse(datos.body)
+      } catch {
+        // Si no es JSON válido, se conserva la respuesta original.
+      }
+    } else if (datos.body && typeof datos.body === 'object') {
+      datos = datos.body
+    }
     if (!respuesta.ok) {
       throw new ApiError(datos.mensaje || datos.message || `Error ${respuesta.status}`, respuesta.status)
     }
