@@ -12,34 +12,17 @@ const client = new DynamoDBClient({ region: "us-west-1" });
 const docClient = DynamoDBDocumentClient.from(client);
 
 
-const fetchTasks = async () => {
-  try {
-    const { data } = await axios.get(API_URL);
+export const fetchTasks = async () => {
+  const command = new ScanCommand({
+    ExpressionAttributeNames: { "#name": "name" },
+    ProjectionExpression: "id, #name, completed",
+    TableName: "Tasks",
+  });
 
-    // Lambda devuelve la respuesta HTTP completa como objeto.
-    const body = data.body;
+  const response = await docClient.send(command);
 
-    // El body contiene un JSON serializado.
-    const tasks = typeof body === "string"
-      ? JSON.parse(body)
-      : body;
-
-    if (!Array.isArray(tasks)) {
-      console.error("La respuesta no contiene una lista:", tasks);
-      setTasks([]);
-      return;
-    }
-
-    setTasks(tasks);
-  } catch (err) {
-    console.error(
-      "Error al obtener tareas:",
-      err.response?.data ?? err.message
-    );
-    setTasks([]);
-  }
+  return response;
 };
-
 
 export const createTasks = async ({ name, completed }) => {
   const uuid = crypto.randomUUID();

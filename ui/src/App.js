@@ -14,26 +14,32 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
 
   const fetchTasks = async () => {
-    try {
-      const response = await axios.get(API_URL);
-      const data = response.data;
+  try {
+    const { data } = await axios.get(API_URL);
 
-      console.log("API_URL:", API_URL);
-      console.log("Respuesta:", data);
-      console.log("¿Es array?:", Array.isArray(data));
+    // Lambda devuelve la respuesta HTTP completa como objeto.
+    const body = data.body;
 
-      if (!Array.isArray(data)) {
-        console.error("La API no devuelve un array:", data);
-        setTasks([]);
-        return;
-      }
+    // El body contiene un JSON serializado.
+    const tasks = typeof body === "string"
+      ? JSON.parse(body)
+      : body;
 
-      setTasks(data);
-    } catch (err) {
-      console.error("Error de API:", err.response?.data ?? err.message);
+    if (!Array.isArray(tasks)) {
+      console.error("La respuesta no contiene una lista:", tasks);
       setTasks([]);
+      return;
     }
-  };
+
+    setTasks(tasks);
+  } catch (err) {
+    console.error(
+      "Error al obtener tareas:",
+      err.response?.data ?? err.message
+    );
+    setTasks([]);
+  }
+};
 
   useEffect(() => {
     fetchTasks();
