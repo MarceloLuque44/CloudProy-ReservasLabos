@@ -7,36 +7,33 @@ import axios from "axios";
 import { API_URL } from "./utils";
 
 const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
+  palette: { mode: "dark" },
 });
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
 
   const fetchTasks = async () => {
-  try {
-    const { data } = await axios.get(API_URL);
+    try {
+      const response = await axios.get(API_URL);
+      const data = response.data;
 
-    console.log("Respuesta de la API:", data);
+      console.log("API_URL:", API_URL);
+      console.log("Respuesta:", data);
+      console.log("¿Es array?:", Array.isArray(data));
 
-    if (!Array.isArray(data)) {
-      console.error("La API no devolvió una lista:", data);
+      if (!Array.isArray(data)) {
+        console.error("La API no devuelve un array:", data);
+        setTasks([]);
+        return;
+      }
+
+      setTasks(data);
+    } catch (err) {
+      console.error("Error de API:", err.response?.data ?? err.message);
       setTasks([]);
-      return;
     }
-
-    setTasks(data);
-  } catch (err) {
-    console.error(
-      "Error al obtener tareas:",
-      err.response?.status,
-      err.response?.data ?? err.message
-    );
-    setTasks([]);
-  }
-};
+  };
 
   useEffect(() => {
     fetchTasks();
@@ -45,9 +42,15 @@ export default function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+      <h2>Prueba de tareas</h2>
+      <p>Total de tareas: {tasks.length}</p>
       <AddTaskForm fetchTasks={fetchTasks} />
       {tasks.map((task) => (
-        <Task task={task} key={task.id} fetchTasks={fetchTasks} />
+        <Task
+          task={task}
+          key={task.id}
+          fetchTasks={fetchTasks}
+        />
       ))}
     </ThemeProvider>
   );
